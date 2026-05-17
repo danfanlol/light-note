@@ -23,14 +23,15 @@ export async function createSection(bookId: string, formData: FormData) {
 
   if (!title) return
 
-  await sql`
+  const [section] = await sql`
     INSERT INTO sections (book_id, title, order_index)
     VALUES (${bookId}, ${title}, (
       SELECT COALESCE(MAX(order_index), 0) + 1 FROM sections WHERE book_id = ${bookId}
     ))
+    RETURNING id
   `
 
-  redirect(`/books/${bookId}`)
+  redirect(`/books/${bookId}/sections/${section.id}`)
 }
 
 export async function renameSection(sectionId: string, redirectTo: string, formData: FormData) {
@@ -50,12 +51,13 @@ export async function createSectionForSubBook(bookId: string, subBookId: string,
 
   if (!title) return
 
-  await sql`
+  const [section] = await sql`
     INSERT INTO sections (book_id, sub_book_id, title, order_index)
     VALUES (${bookId}, ${subBookId}, ${title}, (
       SELECT COALESCE(MAX(order_index), 0) + 1 FROM sections WHERE sub_book_id = ${subBookId}
     ))
+    RETURNING id
   `
 
-  redirect(`/books/${bookId}/sub-books/${subBookId}`)
+  redirect(`/books/${bookId}/sub-books/${subBookId}/sections/${section.id}`)
 }
