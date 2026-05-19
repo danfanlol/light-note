@@ -20,7 +20,7 @@ export default async function Home() {
             >
               + Add Book
             </Link>
-            <UserButton afterSignOutUrl="/sign-in" />
+            <UserButton />
           </div>
         </div>
 
