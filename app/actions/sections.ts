@@ -3,6 +3,7 @@
 import sql from '@/lib/db'
 import { Section } from '@/lib/database.types'
 import { redirect } from 'next/navigation'
+import { assertBookOwner } from '@/lib/auth-helpers'
 
 export async function getSections(bookId: string): Promise<Section[]> {
   const sections = await sql`
@@ -19,6 +20,8 @@ export async function getSectionsForSubBook(subBookId: string): Promise<Section[
 }
 
 export async function createSection(bookId: string, formData: FormData) {
+  await assertBookOwner(bookId)
+
   const title = (formData.get('title') as string)?.trim()
 
   if (!title) return
@@ -47,6 +50,8 @@ export async function deleteSection(sectionId: string, redirectTo: string) {
 }
 
 export async function createSectionForSubBook(bookId: string, subBookId: string, formData: FormData) {
+  await assertBookOwner(bookId)
+
   const title = (formData.get('title') as string)?.trim()
 
   if (!title) return

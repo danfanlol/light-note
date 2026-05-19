@@ -3,6 +3,7 @@
 import sql from '@/lib/db'
 import { SubBook } from '@/lib/database.types'
 import { redirect } from 'next/navigation'
+import { assertBookOwner } from '@/lib/auth-helpers'
 
 export async function getSubBooks(bookId: string): Promise<SubBook[]> {
   const subBooks = await sql`
@@ -24,6 +25,8 @@ export async function deleteSubBook(subBookId: string, redirectTo: string) {
 }
 
 export async function createSubBook(bookId: string, formData: FormData) {
+  await assertBookOwner(bookId)
+
   const title = (formData.get('title') as string)?.trim()
 
   if (!title) return

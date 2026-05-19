@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { UserButton } from '@clerk/nextjs'
 import { getBooks } from './actions/books'
 
 export default async function Home() {
@@ -12,12 +13,15 @@ export default async function Home() {
           <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
             My Books
           </h1>
-          <Link
-            href="/books/new"
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors"
-          >
-            + Add Book
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/books/new"
+              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors"
+            >
+              + Add Book
+            </Link>
+            <UserButton afterSignOutUrl="/sign-in" />
+          </div>
         </div>
 
         {books.length === 0 ? (
