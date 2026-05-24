@@ -2,10 +2,11 @@ import Link from 'next/link'
 import { getBooks } from '@/app/actions/books'
 import { getSections } from '@/app/actions/sections'
 import { getSubBooks } from '@/app/actions/sub-books'
-import { getMainIdeasForBook } from '@/app/actions/passages'
+import { getMainIdeasForBook, getPassagesForBook } from '@/app/actions/passages'
 import BookTitleMenu from './BookTitleMenu'
 import SubBookCard from '@/app/components/SubBookCard'
 import SectionCard from '@/app/components/SectionCard'
+import SectionSearchFilter from '@/app/components/SectionSearchFilter'
 import { SubBook } from '@/lib/database.types'
 
 export default async function BookPage({
@@ -26,9 +27,10 @@ export default async function BookPage({
     )
   }
 
-  const [items, mainIdeas] = await Promise.all([
+  const [items, mainIdeas, allPassages] = await Promise.all([
     book.has_sub_books ? getSubBooks(id) : getSections(id),
     book.has_sub_books ? Promise.resolve([]) : getMainIdeasForBook(id),
+    book.has_sub_books ? Promise.resolve([]) : getPassagesForBook(id),
   ])
 
   const addHref = book.has_sub_books
@@ -92,21 +94,18 @@ export default async function BookPage({
               </Link>
             </div>
           )
-        ) : (
+        ) : book.has_sub_books ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
-              book.has_sub_books ? (
-                <SubBookCard key={item.id} subBook={item as SubBook} bookId={id} />
-              ) : (
-                <SectionCard
-                  key={item.id}
-                  section={item as import('@/lib/database.types').Section}
-                  href={`/books/${id}/sections/${item.id}`}
-                  backHref={`/books/${id}`}
-                />
-              )
+              <SubBookCard key={item.id} subBook={item as SubBook} bookId={id} />
             ))}
           </div>
+        ) : (
+          <SectionSearchFilter
+            sections={items as import('@/lib/database.types').Section[]}
+            passages={allPassages}
+            bookId={id}
+          />
         )}
 
         {mainIdeas.length > 0 && (

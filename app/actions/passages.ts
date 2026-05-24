@@ -46,6 +46,16 @@ export async function deletePassage(passageId: string) {
   revalidatePath('/', 'layout')
 }
 
+export async function getPassagesForBook(bookId: string): Promise<Passage[]> {
+  const rows = await sql`
+    SELECT p.* FROM passages p
+    JOIN sections s ON p.section_id = s.id
+    WHERE s.book_id = ${bookId} AND s.sub_book_id IS NULL
+    ORDER BY p.created_at ASC
+  `
+  return rows as Passage[]
+}
+
 export async function getMainIdeasForSubBook(subBookId: string): Promise<{ main_idea: string; section_id: string }[]> {
   const rows = await sql`
     SELECT p.main_idea, p.section_id
