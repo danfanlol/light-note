@@ -7,11 +7,13 @@ import { Section, Passage } from '@/lib/database.types'
 export default function SectionSearchFilter({
   sections,
   passages,
-  bookId,
+  sectionHrefPrefix,
+  backHref,
 }: {
   sections: Section[]
   passages: Passage[]
-  bookId: string
+  sectionHrefPrefix: string
+  backHref: string
 }) {
   const [query, setQuery] = useState('')
 
@@ -86,8 +88,8 @@ export default function SectionSearchFilter({
             <SectionCard
               key={section.id}
               section={section}
-              href={`/books/${bookId}/sections/${section.id}`}
-              backHref={`/books/${bookId}`}
+              href={`${sectionHrefPrefix}/${section.id}`}
+              backHref={backHref}
             />
           ))}
         </div>

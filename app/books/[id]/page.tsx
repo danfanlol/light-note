@@ -104,7 +104,8 @@ export default async function BookPage({
           <SectionSearchFilter
             sections={items as import('@/lib/database.types').Section[]}
             passages={allPassages}
-            bookId={id}
+            sectionHrefPrefix={`/books/${id}/sections`}
+            backHref={`/books/${id}`}
           />
         )}
 

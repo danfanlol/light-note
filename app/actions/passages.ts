@@ -56,6 +56,16 @@ export async function getPassagesForBook(bookId: string): Promise<Passage[]> {
   return rows as Passage[]
 }
 
+export async function getPassagesForSubBook(subBookId: string): Promise<Passage[]> {
+  const rows = await sql`
+    SELECT p.* FROM passages p
+    JOIN sections s ON p.section_id = s.id
+    WHERE s.sub_book_id = ${subBookId}
+    ORDER BY p.created_at ASC
+  `
+  return rows as Passage[]
+}
+
 export async function getMainIdeasForSubBook(subBookId: string): Promise<{ main_idea: string; section_id: string }[]> {
   const rows = await sql`
     SELECT p.main_idea, p.section_id

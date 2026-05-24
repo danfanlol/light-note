@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { getSubBooks } from '@/app/actions/sub-books'
 import { getSectionsForSubBook } from '@/app/actions/sections'
-import { getMainIdeasForSubBook } from '@/app/actions/passages'
+import { getMainIdeasForSubBook, getPassagesForSubBook } from '@/app/actions/passages'
 import SubBookTitleMenu from '@/app/components/SubBookTitleMenu'
-import SectionCard from '@/app/components/SectionCard'
+import SectionSearchFilter from '@/app/components/SectionSearchFilter'
 
 export default async function SubBookPage({
   params,
@@ -12,10 +12,11 @@ export default async function SubBookPage({
 }) {
   const { id, subBookId } = await params
 
-  const [subBooks, sections, mainIdeas] = await Promise.all([
+  const [subBooks, sections, mainIdeas, allPassages] = await Promise.all([
     getSubBooks(id),
     getSectionsForSubBook(subBookId),
     getMainIdeasForSubBook(subBookId),
+    getPassagesForSubBook(subBookId),
   ])
 
   const subBook = subBooks.find((sb) => sb.id === subBookId)
@@ -71,16 +72,12 @@ export default async function SubBookPage({
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {sections.map((section) => (
-              <SectionCard
-                key={section.id}
-                section={section}
-                href={`/books/${id}/sub-books/${subBookId}/sections/${section.id}`}
-                backHref={`/books/${id}/sub-books/${subBookId}`}
-              />
-            ))}
-          </div>
+          <SectionSearchFilter
+            sections={sections}
+            passages={allPassages}
+            sectionHrefPrefix={`/books/${id}/sub-books/${subBookId}/sections`}
+            backHref={`/books/${id}/sub-books/${subBookId}`}
+          />
         )}
 
         {mainIdeas.length > 0 && (

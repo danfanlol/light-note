@@ -2,12 +2,13 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { deleteSubBook } from '@/app/actions/sub-books'
+import { deleteSubBook, renameSubBook } from '@/app/actions/sub-books'
 import { SubBook } from '@/lib/database.types'
 
 export default function SubBookCard({ subBook, bookId }: { subBook: SubBook; bookId: string }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [confirming, setConfirming] = useState(false)
+  const [editing, setEditing] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
@@ -23,7 +24,10 @@ export default function SubBookCard({ subBook, bookId }: { subBook: SubBook; boo
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') setConfirming(false)
+      if (e.key === 'Escape') {
+        setConfirming(false)
+        setEditing(false)
+      }
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
@@ -31,6 +35,45 @@ export default function SubBookCard({ subBook, bookId }: { subBook: SubBook; boo
 
   return (
     <>
+      {editing && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 dark:bg-black/50"
+          onMouseDown={() => setEditing(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl p-6 mx-4"
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50 mb-4">
+              Rename chapter
+            </h2>
+            <form action={renameSubBook.bind(null, subBook.id, `/books/${bookId}`)}>
+              <input
+                name="title"
+                defaultValue={subBook.title}
+                autoFocus
+                className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:focus:border-zinc-500 mb-5"
+              />
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setEditing(false)}
+                  className="rounded-full border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {confirming && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 dark:bg-black/50"
@@ -94,6 +137,13 @@ export default function SubBookCard({ subBook, bookId }: { subBook: SubBook; boo
 
           {menuOpen && (
             <div className="absolute top-full right-0 mt-1 z-10 min-w-[140px] rounded-lg border border-zinc-200 bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => { setEditing(true); setMenuOpen(false) }}
+                className="w-full text-left px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800 transition-colors"
+              >
+                Edit
+              </button>
               <button
                 type="button"
                 onClick={() => { setConfirming(true); setMenuOpen(false) }}
