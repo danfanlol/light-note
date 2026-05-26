@@ -7,7 +7,7 @@ const clerkHandler = clerkMiddleware(async (auth, request) => {
   if (!isPublicRoute(request)) {
     await auth.protect()
   }
-})
+}, { clockSkewInMs: 60000 })
 
 export function proxy(request: NextRequest) {
   return clerkHandler(request, {} as NextFetchEvent)
