@@ -6,6 +6,7 @@ export type Book = {
   description: string | null
   cover_url: string | null
   has_sub_books: boolean
+  order_index: number
   created_at: string
   updated_at: string
 }
