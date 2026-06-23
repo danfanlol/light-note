@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { deleteSubBook, renameSubBook } from '@/app/actions/sub-books'
 import { SubBook } from '@/lib/database.types'
 
-export default function SubBookCard({ subBook, bookId }: { subBook: SubBook; bookId: string }) {
+export default function SubBookCard({ subBook, bookId, dragging = false }: { subBook: SubBook; bookId: string; dragging?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [editing, setEditing] = useState(false)
@@ -114,8 +114,8 @@ export default function SubBookCard({ subBook, bookId }: { subBook: SubBook; boo
       )}
 
       <div
-        className="group relative rounded-xl border border-zinc-200 bg-white p-5 shadow-sm hover:shadow-md hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 transition-all cursor-pointer"
-        onClick={() => router.push(`/books/${bookId}/sub-books/${subBook.id}`)}
+        className={`group relative rounded-xl border border-zinc-200 bg-white p-5 shadow-sm hover:shadow-md hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 transition-all cursor-pointer ${dragging ? 'shadow-xl scale-105 opacity-90' : ''}`}
+        onClick={() => { if (!dragging) router.push(`/books/${bookId}/sub-books/${subBook.id}`) }}
       >
         {/* Three-dots menu */}
         <div
@@ -125,7 +125,7 @@ export default function SubBookCard({ subBook, bookId }: { subBook: SubBook; boo
         >
           <button
             onClick={() => setMenuOpen((o) => !o)}
-            className="opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-md w-7 h-7 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 dark:hover:text-zinc-200 dark:hover:bg-zinc-800 transition-all"
+            className={`flex items-center justify-center rounded-md w-7 h-7 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 dark:hover:text-zinc-200 dark:hover:bg-zinc-800 transition-all ${dragging ? 'hidden' : 'opacity-0 group-hover:opacity-100'}`}
             aria-label="Book options"
           >
             <svg width="4" height="16" viewBox="0 0 4 16" fill="currentColor">

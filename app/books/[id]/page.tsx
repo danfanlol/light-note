@@ -4,8 +4,7 @@ import { getSections } from '@/app/actions/sections'
 import { getSubBooks } from '@/app/actions/sub-books'
 import { getMainIdeasForBook, getPassagesForBook } from '@/app/actions/passages'
 import BookTitleMenu from './BookTitleMenu'
-import SubBookCard from '@/app/components/SubBookCard'
-import SectionCard from '@/app/components/SectionCard'
+import SubBookGrid from '@/app/components/SubBookGrid'
 import SectionSearchFilter from '@/app/components/SectionSearchFilter'
 import { SubBook } from '@/lib/database.types'
 
@@ -95,11 +94,7 @@ export default async function BookPage({
             </div>
           )
         ) : book.has_sub_books ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((item) => (
-              <SubBookCard key={item.id} subBook={item as SubBook} bookId={id} />
-            ))}
-          </div>
+          <SubBookGrid initialSubBooks={items as SubBook[]} bookId={id} />
         ) : (
           <SectionSearchFilter
             sections={items as import('@/lib/database.types').Section[]}

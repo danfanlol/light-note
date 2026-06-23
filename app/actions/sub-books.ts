@@ -24,6 +24,15 @@ export async function deleteSubBook(subBookId: string, redirectTo: string) {
   redirect(redirectTo)
 }
 
+export async function reorderSubBooks(bookId: string, subBookIds: string[]) {
+  await assertBookOwner(bookId)
+  await Promise.all(
+    subBookIds.map((id, index) =>
+      sql`UPDATE sub_books SET order_index = ${index} WHERE id = ${id} AND book_id = ${bookId}`
+    )
+  )
+}
+
 export async function createSubBook(bookId: string, formData: FormData) {
   await assertBookOwner(bookId)
 
